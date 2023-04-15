@@ -38,6 +38,7 @@ $(document).ready(function () {
         $("#bcd-inputs").show();
         $("#unicode-inputs").hide();
 
+        $('#copy').text('Download Output as a Text File');
         clear();
     })
 
@@ -52,6 +53,7 @@ $(document).ready(function () {
         $("#bcd-inputs").hide();
         $("#unicode-inputs").show();
 
+        $('#copy').text('Copy Output to Clipboard');
         clear();
     })
 
@@ -60,7 +62,10 @@ $(document).ready(function () {
     })
 
     function clear() {
+        $("#answer-header").text("Choose a converter from the left panel, then enter your input into the text box.");
         $(".input-box").val('');
+        $('#input').text('');
+        $('#output').text('');
     }
 
     // Change chosen convert option
@@ -145,6 +150,28 @@ $(document).ready(function () {
         else {
             $('#input').text("Invalid unicode input. Please try again. (Note: The 'U+' notation must be included in the input) ");
             $('#output').text('N/A');
+        }
+    })
+
+
+    $("#copy").click(function() {
+        if ($('#copy').text() == 'Download Output as a Text File') {
+            var output = $('#output').text();
+            var data = new Blob([output], {type: 'text/plain'});
+
+            var downloadLink = document.createElement('a');
+            downloadLink.setAttribute('download', 'output.txt');
+            downloadLink.setAttribute('href', window.URL.createObjectURL(data));
+            downloadLink.click();
+
+        }
+        else {  // copy text inside output box into clipboard
+            var r = document.createRange();
+            r.selectNode(document.getElementById('output'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
         }
     })
 
@@ -571,7 +598,6 @@ $(document).ready(function () {
         }
 
         var decimal = hexToDecimal(input)
-        //alert(decimal)
         if (decimal >= 0 && decimal <= 1114111) {
             return true;
         } else {
@@ -579,16 +605,6 @@ $(document).ready(function () {
         }
 
     }
-
-    // copy text inside output box
-    $("#copy").click(function() {
-        var r = document.createRange();
-        r.selectNode(document.getElementById('output'));
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(r);
-        document.execCommand('copy');
-        window.getSelection().removeAllRanges();
-    })
 
     /*Determine if string only contains hex characters */
     function isHex(h) {
