@@ -15,7 +15,7 @@ Unicode Converter
 - Unicode to UTF-8
 - Unicode to UTF-16
 - Unicode to UTF-32 
-- Option for output to be copied into clipboard
+- Option to copy output into clipboard
 
 ## CSARCH2 X22 Members
 - Capunitan
