@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> CSARCH2 Simulator</title>
+    <script src="index.js" type="text/javascript" defer></script>
+    <link rel="stylesheet" type="text/css" media="all" href="styles.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Square+Peg" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid p-2">
+        <div class="container mx-auto mt-2 text-center">
+            <h1 class="title">CSARCH2 Simulator</h1>
+        </div>
+
+        <div class="container mx-auto text-center mt-3 p-2 ">
+            <div class="row justify-content-around">
+                <button id="bcd-btn" type="button" class="col-3 btn btn-primary p-2">Binary Coded Decimal Converter</button>
+                <button id="unicode-btn" type="button" class="col-3 btn btn-outline-primary p-2">Unicode Converter</button>
+            </div>  
+        </div>
+        
+        
+        <div id="main-container" class="m-3 fs-3 row justify-content-between">
+            <!-- BCD -->
+            <div id="bcd-inputs" class="m-5 col-5 input p-3">
+                <div class="form-check">
+                    <input id="dec-to-ubcd" name="bcd-option" class="form-check-input" type="radio" checked default>
+                    <label class="form-check-label" for="dec-to-ubcd">
+                      Decimal to Unpacked BCD
+                    </label>
+                </div>
+    
+                <div class="form-check">
+                    <input id="dec-to-pbcd" name="bcd-option"  class="form-check-input" type="radio">
+                    <label class="form-check-label" for="dec-to-pbcd">
+                      Decimal to Packed BCD
+                    </label>
+                </div>
+    
+                <div class="form-check">
+                    <input id="dec-to-dpbcd" name="bcd-option"  class="form-check-input" type="radio">
+                    <label class="form-check-label" for="dec-to-dpbcd">
+                      Decimal to Densely Packed BCD
+                    </label>
+                </div>
+    
+                <div class="form-check">
+                    <input id="dpbcd-to-dec" name="bcd-option"  class="form-check-input" type="radio">
+                    <label class="form-check-label" for="dpbcd-to-dec">
+                      Densely Packed BCD to Decimal
+                    </label>
+                </div>
+    
+                <div class="num-input row mx-2">
+                    <input type="number" placeholder="Enter Decimal" id="bcd-input" class="input-box p-1 col-md-5" />
+                </div>
+
+        
+                <div class="mt-3">
+                    <button id="bcd-convert" type="button" class="w-auto btn btn-success p-2 px-3 mx-2">CONVERT</button>
+                    <button type="button" class="clear w-auto btn btn-secondary p-2 px-3 mx-2">Clear</button>
+                </div>
+            </div>
+
+            <!-- Unicode -->
+            <div id="unicode-inputs" class="m-5 col-5 input p-3">
+                <div class="form-check">
+                    <input id="uc-to-utf8" name="unicode-option" class="form-check-input" type="radio" checked>
+                    <label class="form-check-label" for="uc-to-utf8">
+                      Unicode to UTF-8
+                    </label>
+                </div>
+    
+                <div class="form-check">
+                    <input id="uc-to-utf16" name="unicode-option"  class="form-check-input" type="radio">
+                    <label class="form-check-label" for="uc-to-utf16">
+                        Unicode to UTF-16
+                    </label>
+                </div>
+    
+                <div class="form-check">
+                    <input id="uc-to-utf32" name="unicode-option"  class="form-check-input" type="radio">
+                    <label class="form-check-label" for="uc-to-utf32">
+                        Unicode to UTF-32
+                    </label>
+                </div>
+    
+                <div class="num-input row mx-2">
+                    <input type="text" placeholder="Enter Unicode" id="unicode-input" class="input-box p-1 col-md-5" />
+                </div>
+        
+        
+                <div class="mt-3">
+                    <button id="unicode-convert" type="button" class="w-auto btn btn-success p-2 px-3 mx-2">CONVERT</button>
+                    <button type="button" class="clear w-auto btn btn-secondary p-2 px-3 mx-2">Clear</button>
+                </div>
+            </div>
+
+            
+            <div id="solution-container" class="m-5 col-5">
+
+                <div class="row mx-auto mt-3 text-center">
+                    <h2 id="answer-header" class="font-italic">
+                        Choose a converter from the left panel, then enter your input into the text box.
+                    </h2>
+                </div>
+                
+                <div class="mt-2 mx-5 text-center">
+                    <h2 class="fw-bold">Input:</h2>
+                    <h1 id="input" class="result-box"></h1>
+                </div>
+
+                <div class="mt-5 mx-5 text-center">
+                    <h2 class="fw-bold">Output:</h2>
+                    <h1 id="output" class="result-box"></h1>
+                </div>
+                
+                <div class="mt-3 d-flex justify-content-center">
+                    <button id="copy" type="button" class="w-auto btn btn-secondary p-2 px-3">Copy Output to Clipboard</button>
+                </div>
+                <br />
+
+                <!-- <div class="row mx-auto mt-2 text-center">
+                    <h2 class="text-decoration-underline fw-bold">Solution:</h2>
+                </div> -->
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+
+    <footer class="text-center fs-4 fw-bold text-decoration-underline">
+        Created by [CSARCH2-X22] Capunitan, Castillo, Santiago, Singson, & Villarica
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</body>
+
+</html>
