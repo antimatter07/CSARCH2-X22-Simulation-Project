@@ -12,8 +12,6 @@ Unicode Converter
 - Unicode to UTF-16
 - Unicode to UTF-32
 
-<hr>
-
 ## CSARCH2 X22
 - Capunitan
 - Castillo
