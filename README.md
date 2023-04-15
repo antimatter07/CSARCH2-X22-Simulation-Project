@@ -12,7 +12,7 @@ Unicode Converter
 - Unicode to UTF-16
 - Unicode to UTF-32
 
-## CSARCH2 X22
+## CSARCH2 X22 Members
 - Capunitan
 - Castillo
 - Singson
