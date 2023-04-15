@@ -15,6 +15,6 @@ Unicode Converter
 ## CSARCH2 X22 Members
 - Capunitan
 - Castillo
-- Singson
 - Santiago
+- Singson
 - Villarica
