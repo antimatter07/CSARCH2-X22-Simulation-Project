@@ -625,7 +625,7 @@ $(document).ready(function () {
         hexinput = hexinput.replace('U+', '');
         hexinput = hexinput.replace(/^0+/, '');
 
-        hexinput = hexToDecimal(hexinput);
+        decinput = hexToDecimal(hexinput);
 
         if(hexinput.length < 5)
         {
@@ -638,17 +638,23 @@ $(document).ready(function () {
         else
         {
             let utf16 = hexinput.padStart(8, "0");
-            let subinput = hexinput - subFromHex;
+            let subinput = decinput - subFromHex;
             let bininput = subinput.toString(2);
             
             let upper10Bits = [bininput[0],bininput[1], bininput[2], bininput[3], bininput[4], bininput[5], bininput[6], bininput[7], bininput[8], bininput[9]];
             let lower10Bits = [bininput[10],bininput[11], bininput[12], bininput[13], bininput[14], bininput[15], bininput[16], bininput[17], bininput[18], bininput[19]];
 
-            upper10Bits = parseInt(upper10Bits,2) + addToUpper10Bits;
-            lower10Bits = parseInt(lower10Bits,2) + addToLower10Bits;
-            let result = upper10Bits.toString(16).concat(" ", lower10Bits.toString(16));
+            let decupper10Bits = parseInt(upper10Bits,2) + addToUpper10Bits;
+            let declower10Bits = parseInt(lower10Bits,2) + addToLower10Bits;
+            
+            upper10Bits = decupper10Bits.toString(2);
+            lower10Bits = declower10Bits.toString(2);
+            
+            let updated = upper10Bits.concat(lower10Bits);
+            utf16 = updated.join('').toString(16);
+            
             $('#input').text(hexinput);
-            $('#output').text(result);
+            $('#output').text(utf16);
         
         }
     }
