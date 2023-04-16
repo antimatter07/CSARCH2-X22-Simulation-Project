@@ -80,7 +80,6 @@ $(document).ready(function () {
     })
 
     // BCD Converter
-    // TODO: Validate Decimal and BCD
     $('#bcd-convert').click(function () {
         let input = $('#bcd-input').val();
 
@@ -139,9 +138,9 @@ $(document).ready(function () {
 
         if (validateUnicode(input)) {
             switch (selected_unicode) {
-                case 'uc-to-utf8': console.log("TBU");
+                case 'uc-to-utf8': convertToUTF8(input);
                     break;
-                case 'uc-to-utf16': console.log("TBU");
+                case 'uc-to-utf16': convertToUTF16(input);
                     break;
                 case 'uc-to-utf32': convertToUTF32(input);
                     break;
@@ -411,14 +410,9 @@ $(document).ready(function () {
         var sets = Math.floor(split.length / set_len);
         var extra = split.length % set_len;
 
-        console.log("Input: " + num);
-        console.log();
-
         for (var i = 0; i < sets; i++) {
             var bin10 = split.slice(-set_len);
             split = split.slice(0, split.length - set_len);
-            console.log("Remaining Input: " + split.join(''));
-            console.log("Set of 10: " + bin10.join(''));
 
             var p = bin10[0];
             var q = bin10[1];
@@ -434,16 +428,11 @@ $(document).ready(function () {
             var bin_exp = bcdExpansion(p, q, r, s, t, u, v, w, x, y);
 
             result_bin = bin_exp + result_bin;
-
-            console.log("Result: " + result_bin);
-            console.log();
         }
 
         if (extra > 0) {
             var spl_str = split.join('');
-            console.log("Remaining Input: " + spl_str);
             var bin = Array.from(spl_str.padStart(10, "0"));
-            console.log("Set of 10: " + bin.join(''));
 
             var p = bin[0];
             var q = bin[1];
@@ -459,32 +448,14 @@ $(document).ready(function () {
             var bin_exp = bcdExpansion(p, q, r, s, t, u, v, w, x, y);
 
             result_bin = bin_exp + result_bin;
-
-            console.log(bin_exp);
-            console.log("Result: " + result_bin);
-            console.log();
         }
-
-        console.log("Binary: " + result_bin);
-        console.log("Length: " + result_bin.length)
-        console.log();
 
         var iterations = result_bin.length / 4;
         for (var j = 0; j < iterations; j++) {
-            console.log("Iteration: " + (j + 1))
             var bin4 = result_bin.slice(0, 4);
             result_bin = result_bin.slice(4);
-            console.log("Set of 4: " + bin4);
-            console.log("Remaining Bin.: " + result_bin);
 
             result = result.concat(hexMap(bin4));
-
-            if (j % 3 == 0) {
-                console.log("HEEEELOOOOOOOOOOOO")
-                result = " " + result;
-            }
-            console.log("Result: " + result);
-            console.log();
         }
 
         $('#input').text(num);
@@ -566,6 +537,120 @@ $(document).ready(function () {
         // VWXST
         // 11111
         return "1" + "0" + "0" + r + "1" + "0" + "0" + u + "1" + "0" + "0" + y;
+    }
+
+    // ----------------- Singson --------------------- //
+
+    function convertToUTF8(hexinput) {
+        const hexToDecimal = hex => parseInt(hex, 16);
+
+        hexinput = hexinput.replace('U+', '');
+        hexinput = hexinput.replace(/^0+/, '');
+        decinput = hexToDecimal(hexinput);
+
+        $('#input').text(hexinput);
+
+        //U+10000 to U+1FFFFF
+        if (hexinput.length == 5) {
+            bininput = decinput.toString(2)
+            while (bininput[0] == 0) {
+                bininput.shift();
+            }
+            binoutput1 = [1, 1, 1, 1, 1, 0, bininput[0], bininput[1], bininput[2]];
+            binoutput2 = [1, 0, bininput[3], bininput[4], bininput[5], bininput[6], bininput[7], bininput[8]];
+            binoutput3 = [1, 0, bininput[9], bininput[10], bininput[11], bininput[12], bininput[13], bininput[14]];
+            binoutput4 = [1, 0, bininput[15], bininput[16], bininput[17], bininput[18], bininput[19], bininput[20]];
+            bintotaloutput = binoutput1.concat(binoutput2, binoutput3);
+
+            let decoutput = bintotaloutput.join('');
+            let utf8 = decoutput.toString(16)
+            console.log("4 UTF8: [" + utf8 + "]"); 
+            $('#output').text(insertSpaceEvery2Chars(utf8));
+        }
+        else if (hexinput.length <= 4) {
+            //U+0800 to U+FFFF
+            if (hexinput[1] > 7) {
+                bininput = decinput.toString(2)
+                while (bininput[0] == 0) {
+                    bininput.shift();
+                }
+                binoutput1 = [1, 1, 1, 0, bininput[0], bininput[1], bininput[2], bininput[3]];
+                binoutput2 = [1, 0, bininput[4], bininput[5], bininput[6], bininput[7], bininput[8], bininput[9]];
+                binoutput3 = [1, 0, bininput[10], bininput[11], bininput[12], bininput[13], bininput[14], bininput[15]];
+                bintotaloutput = binoutput1.concat(binoutput2, binoutput3);
+
+                let decoutput = bintotaloutput.join('');
+                let utf8 = decoutput.toString(16)
+                console.log("3 UTF8: [" + utf8 + "]"); 
+                $('#output').text(insertSpaceEvery2Chars(utf8));
+            }
+            //U+0080 to U+07FF
+            else if (hexinput[1] <= 7 && hexinput[2] > 7) {
+                bininput = decinput.toString(2)
+                while (bininput[0] == 0) {
+                    bininput.shift();
+                }
+                binoutput1 = [1, 1, 0, bininput[0], bininput[1], bininput[2], bininput[3], bininput[4]];
+                binoutput2 = [1, 0, bininput[5], bininput[6], bininput[7], bininput[8], bininput[9], bininput[10]];
+                bintotaloutput = binoutput1.concat(binoutput2);
+
+                let decoutput = bintotaloutput.join('');
+                let utf8 = decoutput.toString(16)
+                console.log("2 UTF8: [" + utf8 + "]"); 
+                $('#output').text(insertSpaceEvery2Chars(utf8));
+            }
+            //U+0000 to U+007F
+            else {
+                bininput = decinput.toString(2)
+                while (bininput[0] == 0) {
+                    bininput.shift();
+                }
+                binoutput = [0, bininput[0], bininput[1], bininput[2], bininput[3], bininput[4], bininput[5], bininput[6]];
+                let decoutput = binoutput.join('');
+                let utf8 = decoutput.toString(16)
+                console.log("1 UTF8: [" + utf8 + "]"); 
+                $('#output').text(insertSpaceEvery2Chars(utf8));
+            }
+        }
+    }
+
+
+    function convertToUTF16(hexinput) {
+        const hexToDecimal = hex => parseInt(hex, 16);
+
+        const subFromHex = hexToDecimal("10000");
+        const addToUpper10Bits = hexToDecimal("D800");
+        const addToLower10Bits = hexToDecimal("DC00");
+        
+        hexinput = hexinput.replace('U+', '');
+        hexinput = hexinput.replace(/^0+/, '');
+
+        hexinput = hexToDecimal(hexinput);
+
+        if(hexinput.length < 5)
+        {
+            //represent as is 
+            let utf16 = hexinput.padStart(4, "0"); 
+            $('#input').text(hexinput);
+            $('#output').text(utf16);
+            return;
+        }
+        else
+        {
+            let utf16 = hexinput.padStart(8, "0");
+            let subinput = hexinput - subFromHex;
+            let bininput = subinput.toString(2);
+            
+            let upper10Bits = [bininput[0],bininput[1], bininput[2], bininput[3], bininput[4], bininput[5], bininput[6], bininput[7], bininput[8], bininput[9]];
+            let lower10Bits = [bininput[10],bininput[11], bininput[12], bininput[13], bininput[14], bininput[15], bininput[16], bininput[17], bininput[18], bininput[19]];
+
+            upper10Bits = parseInt(upper10Bits,2) + addToUpper10Bits;
+            lower10Bits = parseInt(lower10Bits,2) + addToLower10Bits;
+            let result = upper10Bits.toString(16).concat(" ", lower10Bits.toString(16));
+            $('#input').text(hexinput);
+            $('#output').text(result);
+        
+        }
     }
 
 
