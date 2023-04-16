@@ -9,11 +9,13 @@ BCD Converter
 - decimal to BCD (packed)
 - decimal to BCD (densely packed)
 - Densely Packed BCD to decimal
+- Option to download output as a text file
 
 Unicode Converter
 - Unicode to UTF-8
 - Unicode to UTF-16
-- Unicode to UTF-32
+- Unicode to UTF-32 
+- Option to copy output into clipboard
 
 ## CSARCH2 X22 Members
 - Capunitan
