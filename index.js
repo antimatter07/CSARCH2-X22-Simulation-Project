@@ -485,6 +485,18 @@ $(document).ready(function () {
                 break;
             case "1001": return "9";
                 break;
+            case "1010": return "A";
+                break;
+            case "1011": return "B";
+                break;
+            case "1100": return "C";
+                break;
+            case "1101": return "D";
+                break;
+            case "1110": return "E";
+                break;
+            case "1111": return "F";
+                break;
             default: return -1;
         }
     }
@@ -546,72 +558,82 @@ $(document).ready(function () {
 
         hexinput = hexinput.replace('U+', '');
         hexinput = hexinput.replace(/^0+/, '');
+
+        if (hexinput == '')
+            hexinput = "0";
+
         decinput = hexToDecimal(hexinput);
+
+        var result_bin;
+        var result = "";
 
         $('#input').text(hexinput);
 
         //U+10000 to U+1FFFFF
         if (hexinput.length == 5) {
-            bininput = decinput.toString(2)
-            while (bininput[0] == 0) {
-                bininput.shift();
-            }
+            bininput = decinput.toString(2).padStart(21, "0")
+
             binoutput1 = [1, 1, 1, 1, 1, 0, bininput[0], bininput[1], bininput[2]];
             binoutput2 = [1, 0, bininput[3], bininput[4], bininput[5], bininput[6], bininput[7], bininput[8]];
             binoutput3 = [1, 0, bininput[9], bininput[10], bininput[11], bininput[12], bininput[13], bininput[14]];
             binoutput4 = [1, 0, bininput[15], bininput[16], bininput[17], bininput[18], bininput[19], bininput[20]];
-            bintotaloutput = binoutput1.concat(binoutput2, binoutput3);
-
-            let decoutput = bintotaloutput.join('');
-            let utf8 = decoutput.toString(16)
-            console.log("4 UTF8: [" + utf8 + "]"); 
-            $('#output').text(insertSpaceEvery2Chars(utf8));
+            bintotaloutput = binoutput1.concat(binoutput2);
+            bintotaloutput = bintotaloutput.concat(binoutput3);
+            bintotaloutput = bintotaloutput.concat(binoutput4);
+            
+            let decoutput = bintotaloutput.join('').trim();
+            console.log(decoutput.length)
+            result_bin = decoutput.toString(16).padStart(32, "0")
+            console.log("4 UTF8: [" + result_bin + "]");
+            console.log(result_bin.length)
         }
-        else if (hexinput.length <= 4) {
+        else {
+            hexinput = hexinput.padStart(4, "0");
+            console.log("Hex input: " + hexinput);
             //U+0800 to U+FFFF
-            if (hexinput[1] > 7) {
-                bininput = decinput.toString(2)
-                while (bininput[0] == 0) {
-                    bininput.shift();
-                }
+            if (hexToDecimal(hexinput[1]) > 7) {
+                bininput = decinput.toString(2).padStart(16, "0")
+
                 binoutput1 = [1, 1, 1, 0, bininput[0], bininput[1], bininput[2], bininput[3]];
                 binoutput2 = [1, 0, bininput[4], bininput[5], bininput[6], bininput[7], bininput[8], bininput[9]];
                 binoutput3 = [1, 0, bininput[10], bininput[11], bininput[12], bininput[13], bininput[14], bininput[15]];
                 bintotaloutput = binoutput1.concat(binoutput2, binoutput3);
 
                 let decoutput = bintotaloutput.join('');
-                let utf8 = decoutput.toString(16)
-                console.log("3 UTF8: [" + utf8 + "]"); 
-                $('#output').text(insertSpaceEvery2Chars(utf8));
+                result_bin = decoutput.toString(16).padStart(24, "0")
+                console.log("3 UTF8: [" + result_bin + "]"); 
             }
             //U+0080 to U+07FF
-            else if (hexinput[1] <= 7 && hexinput[2] > 7) {
-                bininput = decinput.toString(2)
-                while (bininput[0] == 0) {
-                    bininput.shift();
-                }
-                binoutput1 = [1, 1, 0, bininput[0], bininput[1], bininput[2], bininput[3], bininput[4]];
-                binoutput2 = [1, 0, bininput[5], bininput[6], bininput[7], bininput[8], bininput[9], bininput[10]];
+            else if (hexinput[1] <= 7 && hexToDecimal(hexinput[2]) >= 15) {
+                bininput = decinput.toString(2).padStart(12, "0")
+
+                binoutput1 = [1, 1, 0, bininput[1], bininput[2], bininput[3], bininput[4], bininput[5]];
+                binoutput2 = [1, 0, bininput[6], bininput[7], bininput[8], bininput[9], bininput[10], bininput[11]];
                 bintotaloutput = binoutput1.concat(binoutput2);
 
                 let decoutput = bintotaloutput.join('');
-                let utf8 = decoutput.toString(16)
-                console.log("2 UTF8: [" + utf8 + "]"); 
-                $('#output').text(insertSpaceEvery2Chars(utf8));
+                result_bin = decoutput.toString(16).padStart(16, "0");
+                console.log("2 UTF8: [" + result_bin + "]"); 
             }
             //U+0000 to U+007F
             else {
-                bininput = decinput.toString(2)
-                while (bininput[0] == 0) {
-                    bininput.shift();
-                }
+                bininput = decinput.toString(2).padStart(7, "0");
                 binoutput = [0, bininput[0], bininput[1], bininput[2], bininput[3], bininput[4], bininput[5], bininput[6]];
                 let decoutput = binoutput.join('');
-                let utf8 = decoutput.toString(16)
-                console.log("1 UTF8: [" + utf8 + "]"); 
-                $('#output').text(insertSpaceEvery2Chars(utf8));
+                result_bin = decoutput.toString(16).padStart(8, "0");
+                console.log("1 UTF8: [" + result_bin + "]");
             }
         }
+
+        var iterations = result_bin.length / 4;
+        for (var j = 0; j < iterations; j++) {
+            var bin4 = result_bin.slice(0, 4);
+            result_bin = result_bin.slice(4);
+
+            result = result.concat(hexMap(bin4));
+        }
+
+        $('#output').text(insertSpaceEvery2Chars(result));
     }
 
 
@@ -625,36 +647,45 @@ $(document).ready(function () {
         hexinput = hexinput.replace('U+', '');
         hexinput = hexinput.replace(/^0+/, '');
 
-        decinput = hexToDecimal(hexinput);
+        var decinput = hexToDecimal(hexinput);
 
         if(hexinput.length < 5)
         {
             //represent as is 
             let utf16 = hexinput.padStart(4, "0"); 
             $('#input').text(hexinput);
-            $('#output').text(utf16);
+            $('#output').text(insertSpaceEvery2Chars(utf16));
         }
         else
         {
             
             let subinput = decinput - subFromHex;
             let bininput = subinput.toString(2);
+            bininput = bininput.padStart(20, "0");
             
             let upper10Bits = [bininput[0],bininput[1], bininput[2], bininput[3], bininput[4], bininput[5], bininput[6], bininput[7], bininput[8], bininput[9]];
             let lower10Bits = [bininput[10],bininput[11], bininput[12], bininput[13], bininput[14], bininput[15], bininput[16], bininput[17], bininput[18], bininput[19]];
-
-            let decupper10Bits = parseInt(upper10Bits.join(''),2) + addToUpper10Bits;
+            
+            let decupper10Bits = parseInt(upper10Bits.join(''), 2) + addToUpper10Bits;
             let declower10Bits = parseInt(lower10Bits.join(''), 2) + addToLower10Bits;
             
             let updatedupper10Bits = decupper10Bits.toString(2);
             let updatedlower10Bits = declower10Bits.toString(2);
-            
+
             binoutput = updatedupper10Bits.concat(updatedlower10Bits);
-            decoutput = parseInt(utf16.join(''),2);
-            utf16 = decoutput.toString(16);
+            var utf16 = binoutput.toString(16);
+
+            var hexutf16 = ""
+            var iterations = utf16.length / 4;
+            for (var j = 0; j < iterations; j++) {
+                var bin4 = utf16.slice(0, 4);
+                utf16 = utf16.slice(4);
+
+                hexutf16 = hexutf16.concat(hexMap(bin4));
+            }
             
             $('#input').text(hexinput);
-            $('#output').text(utf16);
+            $('#output').text(insertSpaceEvery2Chars(hexutf16));
         
         }
     }
@@ -680,6 +711,10 @@ $(document).ready(function () {
 
         //remove 'U+' to isolate hex number
         input = input.replace('U+', '');
+
+        if (input == 0) {
+            return true;
+        }
 
         //remove leading 0s from string
         input = input.replace(/^0+/, '');
@@ -708,6 +743,9 @@ $(document).ready(function () {
     function convertToUTF32(hexinput) {
 
         hexinput = hexinput.replace('U+', '');
+
+        $('#input').text(hexinput);
+
         hexinput = hexinput.replace(/^0+/, '');
 
         //add leading 0s so that it only has 8 nibbles 
@@ -715,7 +753,6 @@ $(document).ready(function () {
 
         let spacedUTF32 = insertSpaceEvery2Chars(utf32);
 
-        $('#input').text(hexinput);
         $('#output').text(spacedUTF32);
 
     }
@@ -734,6 +771,23 @@ $(document).ready(function () {
         return spaced;
 
     }
+
+    function insertSpaceEvery4Chars(string) {
+        var spaced = "";
+
+        for (var i = 0; i < string.length; i++) {
+            if (i % 4 == 3){
+                spaced += string.charAt(i) + " "
+            }
+            else spaced += string.charAt(i);
+
+        }
+        //remove trailing spaces
+        spaced = spaced.trim()
+        return spaced;
+
+    }
+
 
 
 })
