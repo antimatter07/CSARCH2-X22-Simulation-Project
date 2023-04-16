@@ -88,10 +88,10 @@ $(document).ready(function () {
             case 'dec-to-ubcd':
                 $("#answer-header").text("Converting Decimal to Unpacked BCD");
                 break;
-            case 'dec-to-pbcd': 
+            case 'dec-to-pbcd':
                 $("#answer-header").text("Converting Decimal to Packed BCD");
                 break;
-            case 'dec-to-dpbcd': 
+            case 'dec-to-dpbcd':
                 $("#answer-header").text("Converting Decimal to Densely Packed BCD");
                 break;
             case 'dpbcd-to-dec':
@@ -99,7 +99,7 @@ $(document).ready(function () {
                 break;
         }
 
-        if (validateDecimal(input)){
+        if (validateDecimal(input)) {
             switch (selected_bcd) {
                 case 'dec-to-ubcd': decToUnpackedBCD(input);
                     break;
@@ -107,7 +107,7 @@ $(document).ready(function () {
                     break;
                 case 'dec-to-dpbcd': decToDenselyPackedBCD(input);
                     break;
-                case 'dpbcd-to-dec': 
+                case 'dpbcd-to-dec':
                     if (validateBinary(input))
                         bcdToDec(input);
                     else {
@@ -129,22 +129,22 @@ $(document).ready(function () {
         let input = $('#unicode-input').val();
 
         switch (selected_unicode) {
-            case 'uc-to-utf8':  $("#answer-header").text("Converting Unicode to UTF-8");
-                                break;
+            case 'uc-to-utf8': $("#answer-header").text("Converting Unicode to UTF-8");
+                break;
             case 'uc-to-utf16': $("#answer-header").text("Converting Unicode to UTF-16");
-                                break;
+                break;
             case 'uc-to-utf32': $("#answer-header").text("Converting Unicode to UTF-32");
-                                break;
+                break;
         }
 
-        if (validateUnicode(input)){
+        if (validateUnicode(input)) {
             switch (selected_unicode) {
                 case 'uc-to-utf8': console.log("TBU");
-                                    break;
+                    break;
                 case 'uc-to-utf16': console.log("TBU");
-                                    break;
+                    break;
                 case 'uc-to-utf32': convertToUTF32(input);
-                                    break;
+                    break;
             }
         }
         else {
@@ -154,10 +154,10 @@ $(document).ready(function () {
     })
 
 
-    $("#copy").click(function() {
+    $("#copy").click(function () {
         if ($('#copy').text() == 'Download Output as a Text File') {
             var output = $('#output').text();
-            var data = new Blob([output], {type: 'text/plain'});
+            var data = new Blob([output], { type: 'text/plain' });
 
             var downloadLink = document.createElement('a');
             downloadLink.setAttribute('download', 'output.txt');
@@ -258,18 +258,6 @@ $(document).ready(function () {
 
 
     // ----------------- Castillo --------------------- //
-    const A_idx = 0;
-    const E_idx = 4;
-    const I_idx = 8;
-
-    const set_len = 10;
-
-    const V_idx = 6;
-    const W_idx = 7;
-    const X_idx = 8;
-    const S_idx = 3;
-    const T_idx = 4;
-
     function decToDenselyPackedBCD(num) {
         var result = "";
 
@@ -282,35 +270,53 @@ $(document).ready(function () {
             var end = splitted.length - 3;
             var tri = splitted.slice(-3);
             splitted = splitted.slice(0, end);
-            //console.log(tri);
+            console.log(tri);
 
             var bin = Array.from(tri.map(toBin4).join(''));
-            //console.log(bin);
+            console.log(bin);
 
-            var a = bin.splice(A_idx, 1);
-            var e = bin.splice(E_idx - 1, 1);
-            var i = bin.splice(I_idx - 2, 1);
+            a = bin[0];
+            b = bin[1];
+            c = bin[2];
+            d = bin[3];
+            e = bin[4];
+            f = bin[5];
+            g = bin[6];
+            h = bin[7];
+            i = bin[8];
+            j = bin[9];
+            k = bin[10];
+            m = bin[11];
 
-            //console.log(a + ' ' + e + ' ' + i);
-            var succ = binCode(a, e, i, bin);
-            result = bin.join('') + result;
-            //console.log(bin + " ==> " + result);
+            console.log(a + ' ' + e + ' ' + i);
+            var code = codeGet(b, c, d, f, g, h, j, k, m, codeMap(a, e, i));
+            result = code + result;
+            console.log(code + " ==> " + result);
         }
 
         if (extra > 0) {
             tri = splitted.join('');
             tri = Array.from(tri.padStart(3, "0")).map(Number);
-            //console.log(tri);
+            console.log(tri);
             bin = Array.from(tri.map(toBin4).join(''));
 
-            a = bin.splice(A_idx, 1);
-            e = bin.splice(E_idx - 1, 1);
-            i = bin.splice(I_idx - 2, 1);
+            a = bin[0];
+            b = bin[1];
+            c = bin[2];
+            d = bin[3];
+            e = bin[4];
+            f = bin[5];
+            g = bin[6];
+            h = bin[7];
+            i = bin[8];
+            j = bin[9];
+            k = bin[10];
+            m = bin[11];
 
-            //console.log(a + ' ' + e + ' ' + i);
-            succ = binCode(a, e, i, bin);
-            result = bin.join('') + result;
-            //console.log(bin + " ==> " + result);
+            console.log(a + ' ' + e + ' ' + i);
+            var code = codeGet(b, c, d, f, g, h, j, k, m, codeMap(a, e, i));
+            result = code + result;
+            console.log(code + " ==> " + result);
         }
 
         $('#input').text(num);
@@ -347,42 +353,55 @@ $(document).ready(function () {
     }
 
 
-    function binCode(a, e, i, bin) {
+    function codeGet(b, c, d, f, g, h, j, k, m, num) {
+
+        switch (num) {
+            case 0: return b + c + d + f + g + h + "0" + j + k + m;
+                break;
+            case 1: return b + c + d + f + g + h + "1" + "0" + "0" + m;
+                break;
+            case 2: return b + c + d + j + k + h + "1" + "0" + "1" + m;
+                break;
+            case 3: return b + c + d + "1" + "0" + h + "1" + "1" + "1" + m;
+                break;
+            case 4: return j + k + d + f + g + h + "1" + "1" + "0" + m;
+                break;
+            case 5: return f + g + d + "0" + "1" + h + "1" + "1" + "1" + m;
+                break;
+            case 6: return j + k + d + "0" + "0" + h + "1" + "1" + "1" + m;
+                break;
+            case 7: return "0" + "0" + d + "1" + "1" + h + "1" + "1" + "1" + m;
+                break;
+            default: return "Invalide code num";
+        }
+    }
+
+    function codeMap(a, e, i) {
         var temp = new Array(a, e, i);
         temp = temp.join('');
 
         switch (temp) {
-            case "000": bin.splice(I_idx - 2, 0, "0");
-                return 0;
+            case "000": return 0;
                 break;
-            case "001": bin.splice(I_idx - 2, 2, "1", "0", "0");
-                return 1;
+            case "001": return 1;
                 break;
-            case "010": bin.splice(I_idx - 2, 2, "1", "0", "1");
-                return 2;
+            case "010": return 2;
                 break;
-            case "011": bin.splice(I_idx - 2, 2, "1", "1", "1");
-                bin.splice(E_idx - 1, 2, "1", "0");
-                return 3;
+            case "011": return 3;
                 break;
-            case "100": bin.splice(I_idx - 2, 2, "1", "1", "0");
-                return 4;
+            case "100": return 4;
                 break;
-            case "101": bin.splice(I_idx - 2, 2, "1", "1", "1");
-                bin.splice(E_idx - 1, 2, "0", "1");
-                return temp + 5;
+            case "101": return 5;
                 break;
-            case "110": bin.splice(I_idx - 2, 2, "1", "1", "1");
-                bin.splice(E_idx - 1, 2, "0", "0");
-                return temp + 6;
+            case "110": return 6;
                 break;
-            case "111": bin.splice(I_idx - 2, 2, "1", "1", "1");
-                bin.splice(E_idx - 1, 2, "1", "1");
-                bin.splice(A_idx, 2, "0", "0");
-                return temp + 7;
+            case "111": return 7;
                 break;
+            default: return -1;
         }
     }
+
+    const set_len = 10;
 
     function bcdToDec(num) {
         var result = "";
@@ -391,72 +410,81 @@ $(document).ready(function () {
 
         var sets = Math.floor(split.length / set_len);
         var extra = split.length % set_len;
-        console.log("IN FUNC")
-        //console.log("Length : " + split.length);
-        //console.log("Sets: " + sets);
-        //console.log("Extra: " + extra);
 
-        var i;
-        for (i = 0; i < sets; i++) {
+        console.log("Input: " + num);
+        console.log();
+
+        for (var i = 0; i < sets; i++) {
             var bin10 = split.slice(-set_len);
             split = split.slice(0, split.length - set_len);
-            // console.log("Remaining Input: " + split.join(''));
-            // console.log("Set of 10: " + bin10.join(''));
+            console.log("Remaining Input: " + split.join(''));
+            console.log("Set of 10: " + bin10.join(''));
 
-            var V = bin10[V_idx];
-            var W = bin10[W_idx];
-            var X = bin10[X_idx];
-            var S = bin10[S_idx];
-            var T = bin10[T_idx];
+            var p = bin10[0];
+            var q = bin10[1];
+            var r = bin10[2];
+            var s = bin10[3];
+            var t = bin10[4];
+            var u = bin10[5];
+            var v = bin10[6];
+            var w = bin10[7];
+            var x = bin10[8];
+            var y = bin10[9];
 
-            var aei_combi = bcdExpansion(V, W, X, S, T, bin10);
+            var bin_exp = bcdExpansion(p, q, r, s, t, u, v, w, x, y);
 
-            result_bin = bin10.join('') + result_bin;
+            result_bin = bin_exp + result_bin;
 
-            // console.log(bin10);
-            // console.log("Result: " + result_bin);
-            // console.log(aei_combi);
-            // console.log();
+            console.log("Result: " + result_bin);
+            console.log();
         }
 
         if (extra > 0) {
             var spl_str = split.join('');
-            // console.log("Remaining Input: " + spl_str);
+            console.log("Remaining Input: " + spl_str);
             var bin = Array.from(spl_str.padStart(10, "0"));
-            // console.log("Set of 10: " + bin.join(''));
+            console.log("Set of 10: " + bin.join(''));
 
-            var v = bin[V_idx];
-            var w = bin[W_idx];
-            var x = bin[X_idx];
-            var s = bin[S_idx];
-            var t = bin[T_idx];
+            var p = bin[0];
+            var q = bin[1];
+            var r = bin[2];
+            var s = bin[3];
+            var t = bin[4];
+            var u = bin[5];
+            var v = bin[6];
+            var w = bin[7];
+            var x = bin[8];
+            var y = bin[9];
 
-            var aei = bcdExpansion(v, w, x, s, t, bin);
+            var bin_exp = bcdExpansion(p, q, r, s, t, u, v, w, x, y);
 
-            result_bin = bin.join('') + result_bin;
+            result_bin = bin_exp + result_bin;
 
-            // console.log(bin10);
-            // console.log("Result: " + result_bin);
-            // console.log(aei);
-            // console.log();
+            console.log(bin_exp);
+            console.log("Result: " + result_bin);
+            console.log();
         }
 
-        // console.log("Binary: " + result_bin);
-        // console.log("Length: " + result_bin.length)
-        // console.log();
+        console.log("Binary: " + result_bin);
+        console.log("Length: " + result_bin.length)
+        console.log();
 
-        var j;
         var iterations = result_bin.length / 4;
-        for (j = 0; j < iterations; j++) {
-            // console.log("Iteration: " + (j+1))
+        for (var j = 0; j < iterations; j++) {
+            console.log("Iteration: " + (j + 1))
             var bin4 = result_bin.slice(0, 4);
             result_bin = result_bin.slice(4);
-            // console.log("Set of 4: " + bin4);
-            // console.log("Remaining Bin.: " + result_bin);
+            console.log("Set of 4: " + bin4);
+            console.log("Remaining Bin.: " + result_bin);
 
             result = result.concat(hexMap(bin4));
-            // console.log("Result: " + result);
-            // console.log();
+
+            if (j % 3 == 0) {
+                console.log("HEEEELOOOOOOOOOOOO")
+                result = " " + result;
+            }
+            console.log("Result: " + result);
+            console.log();
         }
 
         $('#input').text(num);
@@ -491,79 +519,53 @@ $(document).ready(function () {
     }
 
 
-    function bcdExpansion(V, W, X, S, T, bin10) {
+    function bcdExpansion(p, q, r, s, t, u, v, w, x, y) {
         // VWXST
         // 0....
-        if (V === "0") {
-            bin10.splice(A_idx, 0, "0");
-            bin10.splice(E_idx, 0, "0");
-            return "000";
+        if (v === "0") {
+            return "0" + p + q + r + "0" + s + t + u + "0" + w + x + y;
         }
 
         // VWXST
         // 1xx..
-        if (W === "0") {
+        if (w === "0") {
             // 10x..
-            if (X === "0") {
+            if (x === "0") {
                 // 100..
-                bin10.splice(A_idx, 0, "0");
-                bin10.splice(E_idx, 0, "0");
-                return "001";
+                return "0" + p + q + r + "0" + s + t + u + "1" + "0" + "0" + y;
             }
 
             // 101..
-            bin10.splice(A_idx, 0, "0");
-            bin10.splice(E_idx, 2, "1", "0", "0");
-            bin10.splice(I_idx, 1, "0");
-            return "010";
+            return "0" + p + q + r + "1" + "0" + "0" + u + "0" + s + t + y;
         }
-
 
         // VWXST
         // 110..
-        if (X === "0") {
-            bin10.splice(A_idx, 2, "1", "0", "0");
-            bin10.splice(E_idx, 0, "0");
-            bin10.splice(I_idx, 1, "0");
-            return "100";
+        if (x === "0") {
+            return "1" + "0" + "0" + r + "0" + s + t + u + "0" + p + q + y;
         }
-
 
         // VWXST
         // 1110x
-        if (S === "0") {
+        if (s === "0") {
             // 11100
-            if (T === "0") {
-                bin10.splice(A_idx, 2, "1", "0", "0");
-                bin10.splice(E_idx, 2, "1", "0", "0");
-                bin10.splice(I_idx, 1, "0");
-                return "110";
+            if (t === "0") {
+                return "1" + "0" + "0" + r + "1" + "0" + "0" + u + "0" + p + q + y;
             }
 
             // 11101
-            bin10.splice(A_idx, 2, "1", "0", "0");
-            bin10.splice(E_idx, 0, "0");
-            bin10.splice(I_idx + 1, 2, "0", "0");
-            return "101";
+            return "1" + "0" + "0" + r + "0" + p + q + u + "1" + "0" + "0" + y;
         }
-
 
         // VWXST
         // 11110
-        if (T === "0") {
-            bin10.splice(A_idx, 0, "0");
-            bin10.splice(E_idx + 1, 0, "0");
-            bin10.splice(I_idx + 1, 2, "0", "0");
-            return "011";
+        if (t === "0") {
+            return "0" + p + q + r + "1" + "0" + "0" + u + "1" + "0" + "0" + y;
         }
-
 
         // VWXST
         // 11111
-        bin10.splice(A_idx, 0, "1");
-        bin10.splice(E_idx + 1, 2, "1", "0", "0");
-        bin10.splice(I_idx + 1, 2, "0", "0");
-        return "111";
+        return "1" + "0" + "0" + r + "1" + "0" + "0" + u + "1" + "0" + "0" + y;
     }
 
 
