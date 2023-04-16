@@ -16,6 +16,8 @@ Unicode Converter
 - Unicode to UTF-16
 - Unicode to UTF-32 
 - Option to copy output into clipboard
+<br />
+Note: The 'U+' notation must be included in unicode inputs.
 
 ## CSARCH2 X22 Members
 - Capunitan
