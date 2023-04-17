@@ -573,7 +573,7 @@ $(document).ready(function () {
         if (hexinput.length == 5) {
             bininput = decinput.toString(2).padStart(21, "0")
 
-            binoutput1 = [1, 1, 1, 1, 1, 0, bininput[0], bininput[1], bininput[2]];
+            binoutput1 = [1, 1, 1, 1, 0, bininput[0], bininput[1], bininput[2]];
             binoutput2 = [1, 0, bininput[3], bininput[4], bininput[5], bininput[6], bininput[7], bininput[8]];
             binoutput3 = [1, 0, bininput[9], bininput[10], bininput[11], bininput[12], bininput[13], bininput[14]];
             binoutput4 = [1, 0, bininput[15], bininput[16], bininput[17], bininput[18], bininput[19], bininput[20]];
@@ -591,7 +591,7 @@ $(document).ready(function () {
             hexinput = hexinput.padStart(4, "0");
             console.log("Hex input: " + hexinput);
             //U+0800 to U+FFFF
-            if (hexToDecimal(hexinput[1]) > 7) {
+            if (hexToDecimal(hexinput[1]) > 7 || hexToDecimal(hexinput[0]) > 0) {
                 bininput = decinput.toString(2).padStart(16, "0")
 
                 binoutput1 = [1, 1, 1, 0, bininput[0], bininput[1], bininput[2], bininput[3]];
